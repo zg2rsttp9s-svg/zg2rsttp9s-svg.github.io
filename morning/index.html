@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Morning">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Morning report #1</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a222c;
+      --card2: #222c38;
+      --text: #e8eef4;
+      --muted: #8b9aab;
+      --accent: #5eb3f0;
+      --warm: #f0a35e;
+      --ok: #6bcf8e;
+      --border: #2a3644;
+      --gold: #c9b896;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(1200px 600px at 20% -10%, #1a3a52 0%, transparent 55%),
+                  radial-gradient(900px 500px at 100% 0%, #3a2818 0%, transparent 50%),
+                  var(--bg);
+      color: var(--text);
+      padding: 28px 24px 40px;
+    }
+    .wrap { max-width: 780px; margin: 0 auto; }
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.35rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+    .sub { color: var(--muted); font-size: 0.9rem; }
+    button.refresh {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    button.refresh:hover { border-color: var(--accent); color: var(--accent); }
+    button.refresh:disabled { opacity: 0.5; cursor: wait; }
+    .quote {
+      background: linear-gradient(145deg, #1c2430 0%, #252018 100%);
+      border: 1px solid #3a3428;
+      border-radius: 16px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+    }
+    .quote-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .quote-text {
+      font-size: 1.05rem;
+      line-height: 1.45;
+      font-style: italic;
+      color: var(--text);
+    }
+    .quote-attr {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .song {
+      background: linear-gradient(145deg, #1a2420 0%, #1c2830 100%);
+      border: 1px solid #2e4038;
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+    }
+    .song-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8fc9a8;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .song-title { font-size: 1.15rem; font-weight: 650; margin-bottom: 2px; }
+    .song-artist { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
+    .song-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .song-btn {
+      appearance: none;
+      border: 1px solid #3a5548;
+      background: #243830;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .song-btn:hover { border-color: #6bcf8e; color: #6bcf8e; }
+    .song-btn.secondary {
+      background: var(--card);
+      border-color: var(--border);
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+    .song-note { margin-top: 12px; font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
+    .places {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 640px) { .places { grid-template-columns: 1fr; } }
+    .place {
+      background: linear-gradient(145deg, var(--card) 0%, var(--card2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 18px 14px;
+    }
+    .place.home { border-color: #3a5040; }
+    .place-name { font-weight: 650; font-size: 1.05rem; }
+    .place-sub { color: var(--muted); font-size: 0.8rem; margin-bottom: 10px; }
+    .place-temp { font-size: 2.4rem; font-weight: 650; letter-spacing: -0.03em; line-height: 1; }
+    .place-temp span { font-size: 1.1rem; color: var(--muted); font-weight: 500; }
+    .place-cond { margin-top: 6px; font-size: 0.95rem; }
+    .place-range { margin-top: 8px; color: var(--muted); font-size: 0.85rem; }
+    .place-range .hi { color: var(--warm); font-weight: 600; }
+    .place-range .lo { color: var(--accent); }
+    .status { margin-top: 8px; color: var(--muted); font-size: 0.8rem; }
+    .status.err { color: #f08080; }
+
+    .checkin {
+      background: linear-gradient(145deg, #1c2030 0%, #222830 100%);
+      border: 1px solid #3a4050;
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+    }
+    .checkin-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9bb0d0;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .checkin-prompt {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .checkin-hint { color: var(--muted); font-size: 0.85rem; line-height: 1.4; }
+
+    .map-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .map-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 12px 16px 0;
+    }
+    .map-addr { padding: 4px 16px 10px; font-size: 0.9rem; color: var(--text); }
+    .map-frame {
+      width: 100%;
+      height: 220px;
+      border: 0;
+      display: block;
+      filter: saturate(0.85) brightness(0.92);
+    }
+    .map-link {
+      display: block;
+      padding: 10px 16px 12px;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .map-link:hover { text-decoration: underline; }
+
+    .sidenote {
+      background: linear-gradient(145deg, #2a2030 0%, #1c2430 100%);
+      border: 1px solid #4a3a50;
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+    }
+    .sidenote-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #c9a0d0;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .sidenote-text { font-size: 1rem; font-weight: 600; line-height: 1.35; }
+    .pill {
+      display: inline-block;
+      background: #243040;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      color: var(--ok);
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Morning report #1 <span class="pill" id="live">live</span></h1>
+        <div class="sub">Gilroy · Aptos · Kauai · Budapest · °F</div>
+      </div>
+      <button class="refresh" id="btn" type="button">Refresh</button>
+    </header>
+
+
+    <section class="sidenote" id="sidenote-box">
+      <div class="sidenote-label">Side note</div>
+      <div class="sidenote-text">New York · Oct 9–13 · Alex’s Birthday</div>
+      <div class="sidenote-text" style="margin-top:8px;font-weight:550">Zurich–Budapest · Mar 20, 2027 · 14 days</div>
+      <div class="sidenote-text" style="margin-top:8px;font-weight:550">Sierra Ferrell &amp; Dave Matthews · Cancún · Jan 20–23, 2027</div>
+    </section>
+    <section class="sidenote" id="fx-box">
+      <div class="sidenote-label">US dollar today</div>
+      <div class="sidenote-text" id="fx-eur" style="font-weight:550">$1 = … €</div>
+      <div class="sidenote-text" id="fx-huf" style="margin-top:6px;font-weight:550">$1 = … Ft</div>
+      <div class="sidenote-text" id="fx-upd" style="margin-top:6px;font-size:.75rem;opacity:.7"></div>
+    </section>
+    <section class="quote" id="quote-box">
+      <div class="quote-label">Marcus Aurelius · refresh for a new one</div>
+      <div class="quote-text" id="quote-text"></div>
+      <div class="quote-attr" id="quote-attr"></div>
+    </section>
+
+    <section class="song" id="song-box">
+      <div class="song-label">Song of the day · Sierra Ferrell</div>
+      <div class="song-title" id="song-title"></div>
+      <div class="song-artist" id="song-artist"></div>
+      <div class="song-actions">
+        <a class="song-btn" id="song-play" href="#" target="_blank" rel="noopener">▶ Play on YouTube</a>
+        <a class="song-btn secondary" id="song-search" href="#" target="_blank" rel="noopener">Search Spotify</a>
+      </div>
+      <div class="song-note">Embeds often show ads or get blocked. The Play button opens the real video in a new tab so it actually plays.</div>
+    </section>
+
+
+    <section class="checkin" id="checkin-box">
+      <div class="checkin-label">Friend check-in</div>
+      <div class="checkin-prompt" id="checkin-prompt"></div>
+      <div class="checkin-hint">Your inner circle: the three. One real reach beats a silent day.</div>
+    </section>
+    <div class="places" id="places"></div>
+    <div class="status" id="status">Fetching…</div>
+  </div>
+
+  <script>
+    const LOCATIONS = [
+      { name: "Gilroy", sub: "California", lat: 37.0058, lon: -121.5683, home: true },
+      { name: "Aptos", sub: "California", lat: 36.9772, lon: -121.8994, home: false },
+      { name: "Kauai", sub: "Lihue, HI", lat: 21.9811, lon: -159.3711, home: false },
+      { name: "Budapest", sub: "Hungary", lat: 47.4979, lon: 19.0402, home: false }
+    ];
+    const QUOTES = [["If it is not right, do not do it; if it is not true, do not say it.", "Meditations"], ["Waste no more time arguing about what a good man should be. Be one.", "Meditations"], ["You have power over your mind — not outside events. Realize this, and you will find strength.", "Meditations"], ["The impediment to action advances action. What stands in the way becomes the way.", "Meditations"], ["When you arise in the morning, think of what a privilege it is to be alive — to breathe, to think, to enjoy, to love.", "Meditations"], ["Accept the things to which fate binds you, and love the people with whom fate brings you together.", "Meditations"], ["It is not death that a man should fear, but he should fear never beginning to live.", "Meditations"], ["The best revenge is to be unlike him who performed the injury.", "Meditations"], ["Very little is needed to make a happy life; it is all within yourself, in your way of thinking.", "Meditations"], ["Do not act as if you were going to live ten thousand years. Death hangs over you. While you live, while it is in your power, be good.", "Meditations"], ["The soul becomes dyed with the color of its thoughts.", "Meditations"], ["Confine yourself to the present.", "Meditations"], ["A man’s worth is no greater than his ambitions.", "Meditations"], ["Look well into thyself; there is a source of strength which will always spring up if thou wilt always look.", "Meditations"]];
+    // Verified watch URLs only — open in new tab (embeds = ads / blocked)
+    const SONGS = [
+      ["In Dreams", "Sierra Ferrell", "u0L2ORavt6Y"],
+      ["In Dreams (GemsOnVHS)", "Sierra Ferrell", "6fPqmceCf90"],
+      ["Fox Hunt", "Sierra Ferrell", "4tk5dyg4YNc"],
+      ["Bells of Every Chapel", "Sierra Ferrell", "8rGUEr19LRs"],
+      ["Dollar Bill Bar", "Sierra Ferrell", "e3FQpE99zCo"]
+    ];
+    const WMO = {
+      0: ["Clear", "☀️"], 1: ["Mostly clear", "🌤️"], 2: ["Partly cloudy", "⛅"],
+      3: ["Overcast", "☁️"], 45: ["Fog", "🌫️"], 48: ["Rime fog", "🌫️"],
+      51: ["Light drizzle", "🌦️"], 53: ["Drizzle", "🌦️"], 55: ["Heavy drizzle", "🌧️"],
+      61: ["Light rain", "🌧️"], 63: ["Rain", "🌧️"], 65: ["Heavy rain", "🌧️"],
+      71: ["Light snow", "🌨️"], 73: ["Snow", "🌨️"], 75: ["Heavy snow", "❄️"],
+      80: ["Rain showers", "🌦️"], 81: ["Rain showers", "🌧️"], 82: ["Heavy showers", "🌧️"],
+      95: ["Thunderstorm", "⛈️"], 96: ["Storm + hail", "⛈️"], 99: ["Storm + hail", "⛈️"],
+    };
+    function wmo(code) { return WMO[code] || ["Code " + code, "🌡️"]; }
+    function dayKey() {
+      const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" });
+      return fmt.format(new Date());
+    }
+    function hashKey(key) {
+      let h = 0;
+      for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+      return h;
+    }
+    let lastSong = -1;
+    let lastQuote = -1;
+    function setDailyQuote() {
+      let i;
+      do { i = Math.floor(Math.random() * QUOTES.length); } while (QUOTES.length > 1 && i === lastQuote);
+      lastQuote = i;
+      const q = QUOTES[i];
+      document.getElementById("quote-text").textContent = "“" + q[0] + "”";
+      document.getElementById("quote-attr").textContent = "— Marcus Aurelius, " + q[1];
+    }
+
+    const CHECKINS = [
+      "Reach one of the three today — text, call, or a short voice note.",
+      "Check in with the three: who haven’t you touched this week?",
+      "Pick one of the three — ask how they’re really doing, then listen.",
+      "Share one good thing from your week with one of the three.",
+      "Don’t wait — go first with one of the three.",
+      "Five minutes for one of the three beats a silent day.",
+      "Thank one of the three for something specific.",
+      "Invite one of the three to something small this week.",
+      "Home first, then the three — who gets you today?",
+      "The three are enough when they’re real — show up for one."
+    ];
+    function setDailyCheckin() {
+      const c = CHECKINS[hashKey(dayKey() + "-friend") % CHECKINS.length];
+      document.getElementById("checkin-prompt").textContent = c;
+    }
+    function setDailySong() {
+      let i;
+      do { i = Math.floor(Math.random() * SONGS.length); } while (SONGS.length > 1 && i === lastSong);
+      lastSong = i;
+      const s = SONGS[i];
+      document.getElementById("song-title").textContent = s[0];
+      document.getElementById("song-artist").textContent = s[1];
+      const yt = "https://www.youtube.com/watch?v=" + s[2];
+      document.getElementById("song-play").href = yt;
+      document.getElementById("song-search").href =
+        "https://open.spotify.com/search/" + encodeURIComponent(s[1] + " " + s[0]);
+    }
+    async function fetchPlace(loc) {
+      const url =
+        "https://api.open-meteo.com/v1/forecast?" +
+        "latitude=" + loc.lat + "&longitude=" + loc.lon +
+        "&current=temperature_2m,weather_code" +
+        "&daily=weather_code,temperature_2m_max,temperature_2m_min" +
+        "&temperature_unit=fahrenheit&timezone=auto&forecast_days=1";
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(loc.name + " HTTP " + res.status);
+      return res.json();
+    }
+    async function loadFx() {
+      try {
+        const r = await fetch("https://open.er-api.com/v6/latest/USD");
+        const d = await r.json();
+        const eur = d.rates.EUR, huf = d.rates.HUF;
+        document.getElementById("fx-eur").textContent = "$1 = €" + eur.toFixed(3) + "  ·  €1 = $" + (1/eur).toFixed(3);
+        document.getElementById("fx-huf").textContent = "$1 = " + huf.toFixed(1) + " Ft  ·  1,000 Ft = $" + (1000/huf).toFixed(2);
+        document.getElementById("fx-upd").textContent = "Rates as of " + new Date(d.time_last_update_unix*1000).toLocaleString("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) + " Pacific";
+      } catch (e) {
+        document.getElementById("fx-upd").textContent = "Couldn’t load exchange rates";
+      }
+    }
+    async function load() {
+      loadFx();
+      const btn = document.getElementById("btn");
+      const status = document.getElementById("status");
+      const places = document.getElementById("places");
+      btn.disabled = true;
+      status.className = "status";
+      status.textContent = "Refreshing…";
+      try {
+        const results = await Promise.all(LOCATIONS.map(fetchPlace));
+        places.innerHTML = "";
+        results.forEach((data, i) => {
+          const loc = LOCATIONS[i];
+          const c = data.current;
+          const d = data.daily;
+          const [label, emoji] = wmo(c.weather_code);
+          const card = document.createElement("div");
+          card.className = "place" + (loc.home ? " home" : "");
+          card.innerHTML =
+            '<div class="place-name">' + loc.name + " " + emoji + "</div>" +
+            '<div class="place-sub">' + loc.sub + "</div>" +
+            '<div class="place-temp">' + Math.round(c.temperature_2m) + "<span>°</span></div>" +
+            '<div class="place-cond">' + label + "</div>" +
+            '<div class="place-range"><span class="hi">' + Math.round(d.temperature_2m_max[0]) +
+            "°</span> / <span class=\"lo\">" + Math.round(d.temperature_2m_min[0]) + "°</span> today</div>";
+          places.appendChild(card);
+        });
+        const updated = new Date().toLocaleString("en-US", {
+          timeZone: "America/Los_Angeles", weekday: "short", hour: "numeric", minute: "2-digit",
+        });
+        setDailyQuote();
+        setDailySong();
+        setDailyCheckin();
+        status.textContent = "Updated " + updated + " Pacific · auto-refresh every 15 min";
+        document.getElementById("live").textContent = "live";
+        document.getElementById("live").style.color = "";
+      } catch (e) {
+        status.className = "status err";
+        status.textContent = "Couldn’t load weather: " + e.message;
+        document.getElementById("live").textContent = "offline";
+        document.getElementById("live").style.color = "#f08080";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+    document.getElementById("btn").addEventListener("click", load);
+    setDailyQuote();
+    setDailySong();
+    setDailyCheckin();
+    load();
+    setInterval(load, 15 * 60 * 1000);
+  </script>
+</body>
+</html>
