@@ -293,10 +293,18 @@
     // Verified watch URLs only — open in new tab (embeds = ads / blocked)
     const SONGS = [
       ["In Dreams", "Sierra Ferrell", "u0L2ORavt6Y"],
-      ["In Dreams (GemsOnVHS)", "Sierra Ferrell", "6fPqmceCf90"],
-      ["Fox Hunt", "Sierra Ferrell", "4tk5dyg4YNc"],
       ["Bells of Every Chapel", "Sierra Ferrell", "8rGUEr19LRs"],
-      ["Dollar Bill Bar", "Sierra Ferrell", "e3FQpE99zCo"]
+      ["Why Haven't You Loved Me Yet", "Sierra Ferrell", ""],
+      ["The Sea", "Sierra Ferrell", ""],
+      ["Golden Crown", "Sierra Ferrell", ""],
+      ["Made Like That", "Sierra Ferrell", ""],
+      ["Far Away Across the Sea", "Sierra Ferrell", ""],
+      ["The Garden", "Sierra Ferrell", ""],
+      ["I Could Drive You Crazy", "Sierra Ferrell", ""],
+      ["Silver Silver", "Sierra Ferrell", ""],
+      ["Wait You Out", "Sierra Ferrell", ""],
+      ["Rosemary", "Sierra Ferrell", ""],
+      ["West Virginia Waltz", "Sierra Ferrell", ""]
     ];
     const WMO = {
       0: ["Clear", "☀️"], 1: ["Mostly clear", "🌤️"], 2: ["Partly cloudy", "⛅"],
@@ -351,7 +359,9 @@
       const s = SONGS[i];
       document.getElementById("song-title").textContent = s[0];
       document.getElementById("song-artist").textContent = s[1];
-      const yt = "https://www.youtube.com/watch?v=" + s[2];
+      const yt = s[2]
+        ? ("https://www.youtube.com/watch?v=" + s[2])
+        : ("https://www.youtube.com/results?search_query=" + encodeURIComponent(s[1] + " " + s[0]));
       document.getElementById("song-play").href = yt;
       document.getElementById("song-search").href =
         "https://open.spotify.com/search/" + encodeURIComponent(s[1] + " " + s[0]);
