@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>H&amp;M Checklist</title>
+  <meta name="apple-mobile-web-app-title" content="H&amp;M Checklist">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#D9622B">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" href="favicon.ico">
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+      padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));box-sizing:border-box;
+      background:#F7F0E2;color:#231F20;font:18px/1.4 -apple-system,"SF Pro Text",BlinkMacSystemFont,Helvetica,Arial,sans-serif;text-align:center}
+    img{width:120px;height:120px;border-radius:27px}
+    a.go{display:block;width:100%;max-width:340px;padding:18px;border-radius:14px;background:#B4491C;color:#fff;font-weight:700;font-size:20px;text-decoration:none}
+    p{margin:0;max-width:340px;color:#5a5354}
+  </style>
+</head>
+<body>
+  <img src="apple-touch-icon.png" alt="High &amp; Mighty Pizza Joint">
+  <h1 style="margin:0;font-size:26px">H&amp;M Checklist</h1>
+  <a class="go" id="go" href="#">Open the checklist</a>
+  <p id="how">On iPhone: tap <b>Share</b>, then <b>Add to Home Screen</b> on THIS page, so the H&amp;M icon is saved. Then open it from your home screen.</p>
+  <script>
+    // Paste the live web app link (the /exec link) here before publishing.
+    var APP = 'https://script.google.com/macros/s/AKfycbzfOJ-rFxofOy6ZNT9fNN1iNfkJ9bQ_ZgrPQYP1nUGYMnOyjMQsfTHPm9Tb8k7XKQRR/exec';
+    document.getElementById('go').href = APP;
+    // Opened from the home-screen icon: go straight to the app.
+    var standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    if (standalone && /^https:\/\/script\.google\.com\//.test(APP)) location.replace(APP);
+  </script>
+</body>
+</html>
